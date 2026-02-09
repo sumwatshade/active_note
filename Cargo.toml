@@ -1,0 +1,49 @@
+[package]
+name = "active_note"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "active_note"
+path = "src/lib.rs"
+
+[[bin]]
+name = "active_note"
+path = "src/main.rs"
+required-features = ["embassy"]
+
+[dependencies]
+# Embassy core crates - only needed for binary
+embassy-executor = { version = "0.7", features = ["defmt", "arch-cortex-m", "executor-thread"], optional = true }
+embassy-time = { version = "0.4", features = ["defmt", "defmt-timestamp-uptime"], optional = true }
+embassy-nrf = { version = "0.3", features = ["defmt", "nrf52840", "time-driver-rtc1", "gpiote"], optional = true }
+
+# Cortex-M support - only needed for binary
+cortex-m = { version = "0.7", features = ["critical-section-single-core"], optional = true }
+cortex-m-rt = { version = "0.7", optional = true }
+
+# Logging and panic handling - only needed for binary
+defmt = { version = "0.3", optional = true }
+defmt-rtt = { version = "0.4", optional = true }
+panic-probe = { version = "0.3", features = ["print-defmt"], optional = true }
+
+[dev-dependencies]
+# Testing dependencies (only for host machine tests)
+
+[features]
+default = ["embassy"]
+embassy = [
+    "dep:embassy-executor",
+    "dep:embassy-time",
+    "dep:embassy-nrf",
+    "dep:cortex-m",
+    "dep:cortex-m-rt",
+    "dep:defmt",
+    "dep:defmt-rtt",
+    "dep:panic-probe",
+]
+
+[profile.release]
+debug = 2
+lto = true
+opt-level = "s"
